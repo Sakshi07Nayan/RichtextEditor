@@ -15,28 +15,16 @@ const LoginForm = () => {
   });
   const [formError, setFormError] = useState('');
 
-  // useEffect(() => {
-  //   // Check for token in URL (Google OAuth redirect)
-  //   const urlParams = new URLSearchParams(window.location.search);
-  //   const token = urlParams.get('token');
-    
-  //   if (token) {
-  //     dispatch(handleGoogleAuthSuccess(token));
-  //     // Clear the URL parameters
-  //     window.history.replaceState({}, document.title, window.location.pathname);
-  //   }
-  // }, [dispatch]);
-
   useEffect(() => {
     // Redirect if authenticated
     if (isAuthenticated) {
-      navigate('/dashboard'); // or wherever you want to redirect after login
+      navigate('/dashboard'); 
     }
   }, [isAuthenticated, navigate]);
 
   // Handle Google login
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:5000/api/auth/google?redirect=/auth/callback";
+    window.location.href = "http://localhost:5000/api/auth/google";
   };
 
   const handleChange = (e) => {
