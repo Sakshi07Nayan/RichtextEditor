@@ -31,7 +31,7 @@ function App() {
         />
 
         {/* Auth redirect route */}
-        <Route path="/auth/callback" element={<AuthRedirectHandler />} />
+        <Route path="/auth/success" element={<AuthRedirectHandler />} />
 
         {/* Protected dashboard route */}
         <Route
