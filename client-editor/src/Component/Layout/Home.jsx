@@ -30,7 +30,7 @@ function Home() {
 
         {/* Slogan Section */}
         <div className="col-md-6 text-start my-4">
-          <h2 className="display-1 text-dark" style={{marginLeft:"20px"}} >
+          <h2 className="display-3  text-dark" style={{marginLeft:"20px"}} >
             "Transform Ideas into Impactful Content – Simple, Powerful, Limitless."
           </h2>
         </div>
