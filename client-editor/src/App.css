@@ -111,3 +111,17 @@
     text-align: center;
     margin-bottom: 15px;
   }
+
+/* landingPage */
+
+.transition {
+  transition: all 0.2s ease-in-out;
+}
+
+.transition:hover {
+  transform: scale(1.05);
+}
+
+.card:hover {
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}

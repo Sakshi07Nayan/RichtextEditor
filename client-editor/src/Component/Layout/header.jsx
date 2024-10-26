@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../../store/actions/authAction';
 import logo from '../../assets/logo-.png';
 
-function Header() {
+function Header({onNewsFeedClick}) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { isAuthenticated, user } = useSelector((state) => state.auth);
@@ -26,6 +26,9 @@ function Header() {
             footerElement.scrollIntoView({ behavior: 'smooth' });
         }
     };
+    const handleNewsFeedClick = () => {
+        onNewsFeedClick();
+    };
 
     return (
         <header className="bg-light p-3 shadow-sm">
@@ -35,16 +38,23 @@ function Header() {
                     <img src={logo} alt="Logo" className="me-3" style={{ width: '200px' }} />
 
                     <nav className="d-none d-md-flex">
-                        <Link to="/" className="text-dark nav-link ms-3">
-                            Home
-                        </Link>
                         {isAuthenticated ? (
+                            <>
+                                <Link to="/dashboard" className="text-dark nav-link ms-3">
+                                    CONTENT LIST
+                                </Link>
 
-                            <Link to="/newsfeed" className="text-dark nav-link ms-3">
-                                News Feed
-                            </Link>
+                                <Link to="/" className="text-dark nav-link ms-3" onClick={handleNewsFeedClick}>
+                                    NEW FEEDS
+                                </Link>
+                            </>
                         ) : (
-                            <span onClick={handleScrollToFooter} className="text-dark nav-link ms-3" style={{ cursor: 'pointer' }}>Contact</span>
+                            <>
+                                <Link to="/" className="text-dark nav-link ms-3">
+                                    Home
+                                </Link>
+                                <span onClick={handleScrollToFooter} className="text-dark nav-link ms-3" style={{ cursor: 'pointer' }}>Contact</span>
+                            </>
                         )}
                     </nav>
                 </div>
