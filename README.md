@@ -15,7 +15,7 @@ Language: JavaScript (JSX)
 Follow these steps to set up the project locally:
 
 **Prerequisites**
-Node.js and npm installed
+Node.js and npm installed,
 GitHub account to clone the repository
 
 **Run Project With** : npm start
