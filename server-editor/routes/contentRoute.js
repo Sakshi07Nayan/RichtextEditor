@@ -38,61 +38,32 @@ router.post('/', protect, contentValidation, async (req, res) => {
   }
 });
 
-// Get all content for logged-in user
+// Get all content for logged-in user (Simplified version)
+
 router.get('/', protect, async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const status = req.query.status;
-    const search = req.query.search;
-
-    let query = { user: req.user._id };
-    
-    // Add status filter if provided
-    if (status) {
-      query.status = status;
-    }
-
-    // Add search functionality if search term provided
-    if (search) {
-      query.$text = { $search: search };
-    }
-
-    const contents = await Content.find(query)
+    const contents = await Content.find({ user: req.user._id })
       .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
-
-    const total = await Content.countDocuments(query);
-
-    res.json({
-      contents,
-      page,
-      totalPages: Math.ceil(total / limit),
-      total
-    });
+      .lean(); // Optional: Converts to a plain JavaScript object
+    res.status(200).json(contents);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching content', error: error.message });
   }
 });
 
-// Get single content by ID
+// Get a single content item by ID
 router.get('/:id', protect, async (req, res) => {
   try {
-    const content = await Content.findOne({
-      _id: req.params.id,
-      user: req.user._id
-    });
-
+    const content = await Content.findOne({ _id: req.params.id, user: req.user._id }).lean();
     if (!content) {
       return res.status(404).json({ message: 'Content not found' });
     }
-
-    res.json(content);
+    res.status(200).json(content);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching content', error: error.message });
   }
 });
+
 
 // Update content
 router.put('/:id', protect, contentValidation, async (req, res) => {
@@ -104,22 +75,24 @@ router.put('/:id', protect, contentValidation, async (req, res) => {
 
     const { title, content, description, status, tags } = req.body;
 
-    let contentToUpdate = await Content.findOne({
-      _id: req.params.id,
-      user: req.user._id
-    });
+    const updatedContent = await Content.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user._id
+      },
+      {
+        title,
+        content,
+        description,
+        status,
+        tags
+      },
+      { new: true }
+    );
 
-    if (!contentToUpdate) {
+    if (!updatedContent) {
       return res.status(404).json({ message: 'Content not found' });
     }
-
-    contentToUpdate.title = title;
-    contentToUpdate.content = content;
-    contentToUpdate.description = description;
-    contentToUpdate.status = status;
-    contentToUpdate.tags = tags;
-
-    const updatedContent = await contentToUpdate.save();
 
     res.json(updatedContent);
   } catch (error) {
@@ -130,7 +103,7 @@ router.put('/:id', protect, contentValidation, async (req, res) => {
 // Delete content
 router.delete('/:id', protect, async (req, res) => {
   try {
-    const content = await Content.findOne({
+    const content = await Content.findOneAndDelete({
       _id: req.params.id,
       user: req.user._id
     });
@@ -139,38 +112,9 @@ router.delete('/:id', protect, async (req, res) => {
       return res.status(404).json({ message: 'Content not found' });
     }
 
-    await content.remove();
-    res.json({ message: 'Content deleted' });
+    res.json({ message: 'Content deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting content', error: error.message });
-  }
-});
-
-// Get content statistics
-router.get('/stats/summary', protect, async (req, res) => {
-  try {
-    const stats = await Content.aggregate([
-      { $match: { user: req.user._id } },
-      {
-        $group: {
-          _id: '$status',
-          count: { $sum: 1 }
-        }
-      }
-    ]);
-
-    const totalContent = await Content.countDocuments({ user: req.user._id });
-    const recentContent = await Content.find({ user: req.user._id })
-      .sort({ createdAt: -1 })
-      .limit(5);
-
-    res.json({
-      stats,
-      totalContent,
-      recentContent
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching stats', error: error.message });
   }
 });
 

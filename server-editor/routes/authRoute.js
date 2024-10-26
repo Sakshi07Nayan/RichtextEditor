@@ -140,49 +140,6 @@ router.get('/me', authorizeUser, (req, res) => {
     });
   });
 
-//   router.post("/logout", (req, res) => {
-//     // Check if session exists
-//     if (req.session) {
-//         console.log("Session exists:", req.session);
-
-//         // Clear the JWT token if stored in a cookie
-//         res.clearCookie('token');
-
-//         // Destroy the session
-//         req.session.destroy((err) => {
-//             if (err) {
-//                 return res.status(500).json({
-//                     error: true,
-//                     message: "Error during logout",
-//                     details: err.message
-//                 });
-//             }
-
-//             // Passport logout
-//             req.logout((err) => {
-//                 if (err) {
-//                     return res.status(500).json({
-//                         error: true,
-//                         message: "Error during logout",
-//                         details: err.message
-//                     });
-//                 }
-
-//                 res.status(200).json({
-//                     error: false,
-//                     message: "Successfully logged out"
-//                 });
-//             });
-//         });
-//     } else {
-//         console.log("No active session found for logout.");
-//         res.status(400).json({
-//             error: true,
-//             message: "No active session to log out from"
-//         });
-//     }
-// });
-
 router.post("/logout", (req, res) => {
     // Clear the JWT token if stored in a cookie
     res.clearCookie('token');
